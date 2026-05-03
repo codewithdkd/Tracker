@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Habit Tracker | Deepak vs Shalini</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="view active">
+            <header style="margin-bottom: 0.5rem;">
+                <h1>Habit Tracking Challenge</h1>
+                <p>Deepak vs Shalini</p>
+            </header>
+
+            <!-- Current Month Display -->
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <h3 id="current-month-display" style="color: #10b981; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;"></h3>
+            </div>
+
+            <div class="cards-container">
+                <div class="user-card deepak-card">
+                    <div class="card-header">
+                        <h2>Deepak</h2>
+                        <span class="leader-crown" id="deepak-crown" style="display: none;">👑</span>
+                    </div>
+                    <div class="points-display">
+                        <span id="deepak-points">0</span>
+                        <span class="pts-label">pts</span>
+                    </div>
+                </div>
+
+                <div class="vs-badge">VS</div>
+
+                <div class="user-card shalini-card">
+                    <div class="card-header">
+                        <h2>Shalini</h2>
+                        <span class="leader-crown" id="shalini-crown" style="display: none;">👑</span>
+                    </div>
+                    <div class="points-display">
+                        <span id="shalini-points">0</span>
+                        <span class="pts-label">pts</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Points Difference Banner -->
+            <div id="difference-banner" style="text-align: center; margin-bottom: 2rem; display: none;">
+                <p id="difference-text" style="font-size: 1.2rem; font-weight: 600; padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 20px; display: inline-block; border: 1px solid var(--glass-border);"></p>
+            </div>
+
+            <div class="progress-section" style="margin-bottom: 1.5rem;">
+                <h3>Monthly Progress</h3>
+                <div class="progress-bar-container">
+                    <div id="deepak-progress" class="progress-fill deepak-fill" style="width: 50%;"></div>
+                    <div id="shalini-progress" class="progress-fill shalini-fill" style="width: 50%;"></div>
+                </div>
+                <div class="progress-labels">
+                    <span id="deepak-percent">50%</span>
+                    <span id="shalini-percent">50%</span>
+                </div>
+            </div>
+
+            <!-- Entry Counts Section -->
+            <div style="text-align: center; margin-bottom: 2.5rem; color: var(--text-muted); font-size: 0.95rem; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                Total Days Logged this Month <br>
+                <span style="color: var(--deepak-color); font-weight:600; display: inline-block; margin-top: 0.5rem;">Deepak: <span id="deepak-entries">0</span></span> 
+                &nbsp;&nbsp;|&nbsp;&nbsp; 
+                <span style="color: var(--shalini-color); font-weight:600;">Shalini: <span id="shalini-entries">0</span></span>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn deepak-btn" onclick="openInputForm('Deepak')">Enter Today’s Record – Deepak</button>
+                <button class="btn shalini-btn" onclick="openInputForm('Shalini')">Enter Today’s Record – Shalini</button>
+            </div>
+            
+            <!-- Past Records Section -->
+            <div class="past-records-section" style="margin-top: 3rem;">
+                <h3>Past Month Records</h3>
+                <div class="table-container">
+                    <table id="past-records-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Deepak Points</th>
+                                <th>Shalini Points</th>
+                                <th>Winner</th>
+                            </tr>
+                        </thead>
+                        <tbody id="past-records-body">
+                            <tr><td colspan="4" style="text-align:center; color: var(--text-muted);">Connect backend to load past records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success View -->
+        <div id="success-view" class="view" style="display: none; text-align: center; padding: 4rem 1rem;">
+            <div style="font-size: 5rem; margin-bottom: 1rem;">✅</div>
+            <h2 style="color: #10b981; font-size: 2rem; margin-bottom: 1rem;">Response is Recorded!</h2>
+            <p style="color: var(--text-muted);">Taking you back to the dashboard...</p>
+        </div>
+
+        <!-- Input Form View -->
+        <div id="input-view" class="view" style="display: none;">
+            <!-- Flex header for proper back button alignment -->
+            <header style="position: relative; text-align: center; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; min-height: 40px;">
+                <button class="back-btn" type="button" onclick="openDashboard()" style="position: absolute; left: 0;" aria-label="Go Back">←</button>
+                <h1 id="welcome-message" style="font-size: 2rem; margin: 0;">Welcome</h1>
+            </header>
+
+            <form id="habit-form" onsubmit="submitForm(event)">
+                <input type="hidden" id="user-name" name="user-name">
+                
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <!-- Sleep Tracking -->
+                <div class="form-section">
+                    <h3>😴 Sleep Tracking</h3>
+                    <div class="form-group row">
+                        <div>
+                            <label for="sleep-time">Sleep Time (Previous Night)</label>
+                            <input type="time" id="sleep-time" name="sleep-time" required>
+                        </div>
+                        <div>
+                            <label for="wake-time">Wake Up Time (Today)</label>
+                            <input type="time" id="wake-time" name="wake-time" required>
+                        </div>
+                    </div>
+                    <!-- Live calculated sleep hours -->
+                    <p id="live-sleep-hours" style="color: #10b981; font-weight: 600; font-size: 0.95rem; margin-top: 0.5rem;">Total Slept Hours: 0.0 hrs</p>
+                </div>
+
+                <!-- Office Timing -->
+                <div class="form-section">
+                    <h3>🏢 Office Timing</h3>
+                    <div class="form-group row">
+                        <div>
+                            <label for="left-home">Time Left Home</label>
+                            <input type="time" id="left-home" name="left-home" required>
+                        </div>
+                        <div>
+                            <label for="returned-home">Time Returned Home</label>
+                            <input type="time" id="returned-home" name="returned-home" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productivity / Study -->
+                <div class="form-section">
+                    <h3>📚 Study / Work</h3>
+                    <div class="form-group">
+                        <label for="study-hours">Study/Work Hours</label>
+                        <input type="number" id="study-hours" name="study-hours" step="0.5" min="0" value="0" required>
+                    </div>
+                </div>
+
+                <!-- Health & Fitness -->
+                <div class="form-section">
+                    <h3>🏃 Health & Fitness</h3>
+                    <div class="form-group row">
+                        <div>
+                            <label>Exercise Type</label>
+                            <div class="toggle-group" data-target="exercise-type">
+                                <button type="button" class="toggle-btn active" data-value="None">None</button>
+                                <button type="button" class="toggle-btn" data-value="Indoor">Indoor</button>
+                                <button type="button" class="toggle-btn" data-value="Outdoor">Outdoor</button>
+                            </div>
+                            <input type="hidden" id="exercise-type" name="exercise-type" value="None">
+                        </div>
+                        <div>
+                            <label for="exercise-minutes">Duration (minutes)</label>
+                            <input type="number" id="exercise-minutes" name="exercise-minutes" min="0" value="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div>
+                            <label for="steps">Steps Walked</label>
+                            <input type="number" id="steps" name="steps" min="0" value="0" required>
+                        </div>
+                        <div>
+                            <label for="calories">Calories Burned</label>
+                            <input type="number" id="calories" name="calories" min="0" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div>
+                            <label for="stretching">Stretching/Yoga (min)</label>
+                            <input type="number" id="stretching" name="stretching" min="0" value="0" required>
+                        </div>
+                        <div>
+                            <label for="sunlight">Outdoor Sunlight (min)</label>
+                            <input type="number" id="sunlight" name="sunlight" min="0" value="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition -->
+                <div class="form-section">
+                    <h3>💧 Nutrition</h3>
+                    <div class="form-group">
+                        <label for="water-intake">Water Intake (Liters)</label>
+                        <input type="number" id="water-intake" name="water-intake" step="0.5" min="0" value="0" required>
+                    </div>
+                    <div class="form-group row">
+                        <div>
+                            <label>Junk / Fast Food</label>
+                            <div class="toggle-group" data-target="junk-food">
+                                <button type="button" class="toggle-btn active" data-value="None">None</button>
+                                <button type="button" class="toggle-btn" data-value="Low">Low</button>
+                                <button type="button" class="toggle-btn" data-value="High">High</button>
+                            </div>
+                            <input type="hidden" id="junk-food" name="junk-food" value="None">
+                        </div>
+                        <div>
+                            <label>Sugar Consumption</label>
+                            <div class="toggle-group" data-target="sugar">
+                                <button type="button" class="toggle-btn active" data-value="None">None</button>
+                                <button type="button" class="toggle-btn" data-value="Limited">Limited</button>
+                                <button type="button" class="toggle-btn" data-value="High">High</button>
+                            </div>
+                            <input type="hidden" id="sugar" name="sugar" value="None">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="checkbox-group" style="margin-top: 1rem;">
+                            <label><input type="checkbox" id="fruits-juice" name="fruits-juice"> Fruits or Juice took?</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Discipline -->
+                <div class="form-section">
+                    <h3>📵 Digital Discipline</h3>
+                    <div class="form-group row">
+                        <div>
+                            <label for="phone-hours">Phone Usage (Hours)</label>
+                            <input type="number" id="phone-hours" name="phone-hours" step="0.5" min="0" value="0" required>
+                        </div>
+                        <div class="checkbox-group" style="margin-top: 1.5rem;">
+                            <label>
+                                <input type="checkbox" id="no-phone-morning" name="no-phone-morning">
+                                No-Phone Morning?
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mental Discipline -->
+                <div class="form-section">
+                    <h3>🧠 Mental Discipline & Behavior</h3>
+                    <div class="form-group row">
+                        <div>
+                            <label for="meditation">Meditation (min)</label>
+                            <input type="number" id="meditation" name="meditation" min="0" value="0" required>
+                        </div>
+                        <div>
+                            <label>Mood Rating (1-5)</label>
+                            <div class="toggle-group" data-target="mood">
+                                <button type="button" class="toggle-btn" data-value="1">1</button>
+                                <button type="button" class="toggle-btn" data-value="2">2</button>
+                                <button type="button" class="toggle-btn active" data-value="3">3</button>
+                                <button type="button" class="toggle-btn" data-value="4">4</button>
+                                <button type="button" class="toggle-btn" data-value="5">5</button>
+                            </div>
+                            <input type="hidden" id="mood" name="mood" value="3">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="checkbox-group" style="margin-top: 1rem;">
+                            <label><input type="checkbox" id="anger" name="anger"> Showed Anger Today?</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group submit-group">
+                    <div class="score-breakdown" id="score-breakdown"></div>
+                    <h2 id="live-points" class="live-points-preview">Daily Score: 0</h2>
+                    <button type="submit" class="submit-btn" id="submit-btn">Submit Record</button>
+                    <p id="submit-status" class="status-msg"></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
